@@ -1,43 +1,49 @@
-import React, { Component } from 'react';
-import {Container} from './App.styled'
+import React, { useState } from 'react';
+import { Container } from './App.styled';
 import Statistics from 'components/Statistics';
 import FeedbackOptions from 'components/FeedbackOptions';
 import Section from 'components/Section';
 import Notification from 'components/Notification';
 
-class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+const App = () =>  {
+    const [good, setGood] = useState(0)
+    const [neutral, setNeutral] = useState(0)
+    const [bad, setBad] = useState(0)
+    const feedback = ['good','neutral', 'bad'];
+    const total = good + neutral + bad;
+    
+   const incrementFeedback = event => {
+       const { name } = event.target;
 
-    incrementFeedback = event => {
-        const { name } = event.target;
-    this.setState(prevState => ({
-      [name]: prevState[name] + 1,
-    }));
-  };
+   switch (name) {
+     case 'good':
+       setGood(prevGood => prevGood + 1);
+       break;
+     case 'neutral':
+       setNeutral(prevNeutral => prevNeutral + 1);
+       break;
+     case 'bad':
+       setBad(prevBad => prevBad + 1);
+       break;
 
-  countPositiveFeedbackPercentage = (total, good) => {
+     default:
+       return;
+   }
+   };
+    
+  const countPositiveFeedbackPercentage = (total, good) => {
     if (!total) {
       return 0;
     }
     return Math.round((good * 100) / total);
   }
-
-  render() {
-    
-    const { good, neutral, bad } = this.state;
-    const total = good + neutral + bad;
-    const increment = this.incrementFeedback;
-    const positivePercentage = this.countPositiveFeedbackPercentage( total, good );
-    const options = Object.keys(this.state);
-
     return (
       <Container>
         <Section title={'Pleace leave feedback'}>
-          <FeedbackOptions options={options} onLeaveFeedback={increment} />
+          <FeedbackOptions
+            options={feedback}
+            onLeaveFeedback={incrementFeedback}
+          />
         </Section>
 
         {total ? (
@@ -47,7 +53,7 @@ class App extends Component {
               neutral={neutral}
               bad={bad}
               total={total}
-              positivePercentage={positivePercentage}
+              positivePercentage={countPositiveFeedbackPercentage(total, good)}
             />
           </Section>
         ) : (
@@ -56,6 +62,5 @@ class App extends Component {
       </Container>
     );
   }
-}
 
 export default App;
