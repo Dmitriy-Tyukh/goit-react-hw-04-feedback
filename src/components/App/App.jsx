@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback} from 'react';
 import { Container } from './App.styled';
 import Statistics from 'components/Statistics';
 import FeedbackOptions from 'components/FeedbackOptions';
@@ -12,7 +12,7 @@ const App = () =>  {
     const feedback = ['good','neutral', 'bad'];
     const total = good + neutral + bad;
     
-   const incrementFeedback = event => {
+   const incrementFeedback = useCallback((event)=> {
        const { name } = event.target;
 
    switch (name) {
@@ -29,7 +29,7 @@ const App = () =>  {
      default:
        return;
    }
-   };
+   }, [])  ;
     
   const countPositiveFeedbackPercentage = (total, good) => {
     if (!total) {
